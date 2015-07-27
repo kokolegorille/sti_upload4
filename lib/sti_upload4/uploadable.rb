@@ -4,7 +4,11 @@ module StiUpload4
       base.send :extend, ClassMethods
       #
       base.class_eval do
-        has_many :uploads, as: :uploadable, dependent: :destroy
+        # Order does not seems to work here!
+        has_many :uploads, 
+          #-> { order(position: :asc) }, 
+          as: :uploadable, 
+          dependent: :destroy
         accepts_nested_attributes_for :uploads, allow_destroy: true
 
         def upload_storage
@@ -12,15 +16,16 @@ module StiUpload4
         end
       end
     end
-    
+
     module ClassMethods
       def has_many_uploads(kind, class_name)
-        has_many kind.to_sym, 
-          as: :uploadable, 
-          class_name: class_name, 
+        has_many kind.to_sym,
+          #-> { order(position: :asc) },
+          as: :uploadable,
+          class_name: class_name,
           dependent: :destroy
         accepts_nested_attributes_for kind.to_sym, allow_destroy: true
-        
+
         self.instance_eval do
           define_method "#{ kind }_storage" do
             eval(kind.to_s).inject(0) { |total, file| total += file.data_file_size.to_i }
@@ -29,8 +34,8 @@ module StiUpload4
       end
 
       def has_one_upload(kind, class_name)
-        has_one kind.to_sym, 
-          as: :uploadable, 
+        has_one kind.to_sym,
+          as: :uploadable,
           class_name: class_name,
           dependent: :destroy
         accepts_nested_attributes_for kind.to_sym, allow_destroy: true
