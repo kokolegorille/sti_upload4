@@ -8,3 +8,5 @@ To prepare database inside engine, use
 
 To prepare main application, you need to add engine migrations with 
 * rake sti_upload4_engine:install:migrations
+
+Updated February 2018, fix security warnings with paperclip and older version of Rails.
